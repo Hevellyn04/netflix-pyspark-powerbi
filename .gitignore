@@ -1,0 +1,13 @@
+# Bloquear o arquivo teimoso
+netflix_titles_(baseCorrigida).csv
+
+# Bloquear planilhas e dados gerais
+*.xlsx
+*.xls
+*.csv
+*.json
+
+# Bloquear o cache local do Power BI
+*.localSettings.json
+*.pbi/
+.pbi/

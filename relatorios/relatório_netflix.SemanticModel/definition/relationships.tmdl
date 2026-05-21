@@ -1,0 +1,5 @@
+relationship 72f72b2f-ce0a-41bd-a522-32d1a08d31f6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: netflix_clean.data_adicao
+	toColumn: LocalDateTable_4a53c1cc-7a07-45f5-a01a-158038aa2680.Date
+

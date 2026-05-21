@@ -1,0 +1,48 @@
+expression 'Erros em netflix_clean' =
+		let
+		Fonte = netflix_clean,
+		  #"Incompatibilidades de Tipo Detectadas" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Fonte, Table.ColumnsOfType(Fonte, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "O tipo do valor não corresponde ao tipo da coluna.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Fonte, pairs),
+		  #"Índice Adicionado" = Table.AddIndexColumn(#"Incompatibilidades de Tipo Detectadas", "Número da Linha" ,1),
+		  #"Erros Mantidos" = Table.SelectRowsWithErrors(#"Índice Adicionado", {"id_conteudo", "titulo", "tipo_midia", "diretor", "elenco", "pais", "data_adicao", "ano_lancamento", "geracao_conteudo", "classificacao", "publico_alvo", "duracao_valor", "duracao_unidade"}),
+		  #"Colunas Reordenadas" = Table.ReorderColumns(#"Erros Mantidos", {"Número da Linha", "id_conteudo", "titulo", "tipo_midia", "diretor", "elenco", "pais", "data_adicao", "ano_lancamento", "geracao_conteudo", "classificacao", "publico_alvo", "duracao_valor", "duracao_unidade"}),
+		    #"Linhas Filtradas" = Table.SelectRows(#"Colunas Reordenadas", each true),
+		    #"Tipo Alterado" = Table.TransformColumnTypes(#"Linhas Filtradas",{{"data_adicao", type datetime}})
+		in
+		  #"Tipo Alterado"
+	lineageTag: 41820a5f-1e54-4d7f-9d04-dde4ef4aa84f
+	queryGroup: 'Erros na Consulta - 13/05/2026 11:18:25'
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
+expression 'Erros em netflix_clean (2)' =
+		let
+		Fonte = netflix_clean,
+		  #"Incompatibilidades de Tipo Detectadas" = let
+		    tableWithOnlyPrimitiveTypes = Table.SelectColumns(Fonte, Table.ColumnsOfType(Fonte, {type nullable number, type nullable text, type nullable logical, type nullable date, type nullable datetime, type nullable datetimezone, type nullable time, type nullable duration})),
+		    recordTypeFields = Type.RecordFields(Type.TableRow(Value.Type(tableWithOnlyPrimitiveTypes))),
+		    fieldNames = Record.FieldNames(recordTypeFields),
+		    fieldTypes = List.Transform(Record.ToList(recordTypeFields), each [Type]),
+		    pairs = List.Transform(List.Positions(fieldNames), (i) => {fieldNames{i}, (v) => if v = null or Value.Is(v, fieldTypes{i}) then v else error [Message = "O tipo do valor não corresponde ao tipo da coluna.", Detail = v], fieldTypes{i}})
+		in
+		    Table.TransformColumns(Fonte, pairs),
+		  #"Índice Adicionado" = Table.AddIndexColumn(#"Incompatibilidades de Tipo Detectadas", "Número da Linha" ,1),
+		  #"Erros Mantidos" = Table.SelectRowsWithErrors(#"Índice Adicionado", {"id_conteudo", "titulo", "tipo_midia", "diretor", "elenco", "pais", "data_adicao", "ano_lancamento", "geracao_conteudo", "classificacao", "publico_alvo", "duracao_valor", "duracao_unidade"}),
+		  #"Colunas Reordenadas" = Table.ReorderColumns(#"Erros Mantidos", {"Número da Linha", "id_conteudo", "titulo", "tipo_midia", "diretor", "elenco", "pais", "data_adicao", "ano_lancamento", "geracao_conteudo", "classificacao", "publico_alvo", "duracao_valor", "duracao_unidade"})
+		in
+		  #"Colunas Reordenadas"
+	lineageTag: 99b6dd73-c1f1-4c52-a02a-b0a80c69416f
+	queryGroup: 'Erros na Consulta - 15/05/2026 14:36:10'
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
