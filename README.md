@@ -1,6 +1,11 @@
 🎬 Netflix Data Engineering & Analytics
 Este projeto engloba o pipeline completo de dados do catálogo da Netflix: desde a ingestão e tratamento pesado de dados brutos utilizando PySpark no Databricks (arquitetura Fato/Dimensão) até a criação de um dashboard interativo no Power BI.
 
+📂 Origem dos Dados 
+ Os dados utilizados neste projeto foram extraídos do **Kaggle*, um ecossistema público e amplamente reconhecido pela comunidade de dados.
+ * Link do Dataset Original: https://www.kaggle.com/datasets/shivamb/netflix-shows
+
+
 📸 O Dashboard
 (!['Visualização Dashboard'](img/dashboard.png))
 
