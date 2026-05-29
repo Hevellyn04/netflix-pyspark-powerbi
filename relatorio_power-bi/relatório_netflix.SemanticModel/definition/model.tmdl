@@ -1,0 +1,21 @@
+model Model
+	culture: pt-BR
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-BR
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["netflix_paises_titulos","netflix_titulos_completos"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table DateTableTemplate_fb6aa769-2c99-4388-8560-3f25ce8c6372
+ref table netflix_paises_titulos
+ref table netflix_titulos_completos
+ref table LocalDateTable_2328d773-9fa0-4627-85f3-acaec1de494e
+
+ref cultureInfo pt-BR
+

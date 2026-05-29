@@ -1,0 +1,189 @@
+table netflix_titulos_completos
+	lineageTag: bae62979-e333-4ad7-8cea-ba2206afb3ad
+
+	measure titulos_unicos = ```
+			DISTINCTCOUNT(netflix_titulos_completos[id_conteudo])
+			
+			```
+		formatString: 0
+		lineageTag: 24aee179-2ffe-43c5-b37d-c4e87a76d66f
+
+	measure crescimento_acumulado = CALCULATE([titulos_unicos], FILTER(ALLSELECTED(netflix_titulos_completos), netflix_titulos_completos[ano_lancamento]<= MAX(netflix_titulos_completos[ano_lancamento])))
+		formatString: 0
+		lineageTag: d85e22bb-33c4-4392-8c4c-f2288829fc52
+
+	measure distribuicao_publico_alvo = VAR totalTitulosContexto = [titulos_unicos] VAR totalTitulosPorPublico = CALCULATE([titulos_unicos], ALL(netflix_titulos_completos[publico_alvo])) RETURN DIVIDE(totalTitulosContexto, totalTitulosPorPublico, 0)
+		lineageTag: 8d44c55c-0c40-483d-9bd5-a8f3ec8af3c8
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure qtd_adolescente = CALCULATE([titulos_unicos], netflix_titulos_completos[publico_alvo] = "Adolescente")
+		formatString: 0
+		lineageTag: bc8a700b-eed5-49f5-ae28-657de7844bd9
+
+	measure Filmes = CALCULATE([titulos_unicos], netflix_titulos_completos[tipo_midia] = "Filme")
+		formatString: 0
+		lineageTag: 613fadd8-f006-4444-803d-4407a5892fd3
+
+	measure media_filmes = CALCULATE(AVERAGE(netflix_titulos_completos[duracao_numero]), netflix_titulos_completos[tipo_midia] = "Filme")
+		formatString: 0
+		lineageTag: cfa5f17f-bf17-43e9-a3da-5e9139b062be
+
+	measure media_series = CALCULATE(AVERAGE(netflix_titulos_completos[duracao_numero]),netflix_titulos_completos[tipo_midia] = "Série")
+		lineageTag: edda10cb-6ce4-4d68-a26d-65f721ebe128
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Publico Predominante' = VAR MaiorValor = MAX([qtd_adulto], MAX([qtd_adolescente], [qtd_infantil])) RETURN SWITCH(TRUE(), MaiorValor = [qtd_adulto], "Adulto", MaiorValor = [qtd_adolescente], "Adolescente", MaiorValor = [qtd_infantil],  "Infantil", "Variado")
+		lineageTag: 2f7e7245-d815-437e-90d4-cf90a5fd237a
+
+	measure qtd_adulto = CALCULATE([titulos_unicos],netflix_titulos_completos[publico_alvo] = "Adulto")
+		formatString: 0
+		lineageTag: 14901521-e2ed-4bb8-8faf-47c9604a3e7d
+
+	measure qtd_infantil = CALCULATE([titulos_unicos], netflix_titulos_completos[publico_alvo] = "Infantil")
+		formatString: 0
+		lineageTag: 8ef9c45a-a275-4572-ad77-210fe4c4462a
+
+	measure Séries = CALCULATE([titulos_unicos], netflix_titulos_completos[tipo_midia] = "Série")
+		formatString: 0
+		lineageTag: 00a53ca9-1e50-48d7-b061-9de3741bf9c1
+
+	column id_conteudo
+		dataType: string
+		lineageTag: fa5d8f9e-9a14-43a5-9123-dea12c3bb52d
+		summarizeBy: none
+		sourceColumn: id_conteudo
+
+		annotation SummarizationSetBy = Automatic
+
+	column tipo_midia
+		dataType: string
+		lineageTag: 866bac44-0d9e-4df2-a40e-eac563e5b94f
+		summarizeBy: none
+		sourceColumn: tipo_midia
+
+		annotation SummarizationSetBy = Automatic
+
+	column titulo
+		dataType: string
+		lineageTag: a18bcd7d-0325-4f2f-9f7f-74ba603f8e20
+		summarizeBy: none
+		sourceColumn: titulo
+
+		annotation SummarizationSetBy = Automatic
+
+	column diretor
+		dataType: string
+		lineageTag: 44b05eb5-8de0-4934-8061-05e2499c4dc3
+		summarizeBy: none
+		sourceColumn: diretor
+
+		annotation SummarizationSetBy = Automatic
+
+	column elenco
+		dataType: string
+		lineageTag: ec2a0468-8989-4ead-a464-1fa78d1e19ff
+		summarizeBy: none
+		sourceColumn: elenco
+
+		annotation SummarizationSetBy = Automatic
+
+	column data_adicao
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 8a868f80-7887-4d3e-a35f-61512d6d9f7f
+		summarizeBy: none
+		sourceColumn: data_adicao
+
+		variation Variation
+			isDefault
+			relationship: 64361a5b-089a-4499-a4f6-6c13be95ae11
+			defaultHierarchy: LocalDateTable_2328d773-9fa0-4627-85f3-acaec1de494e.'Hierarquia de datas'
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column ano_lancamento
+		dataType: int64
+		formatString: 0
+		lineageTag: f1cc50a3-34db-4a37-b2af-f638e71ee66f
+		summarizeBy: none
+		sourceColumn: ano_lancamento
+
+		annotation SummarizationSetBy = User
+
+	column classificacao
+		dataType: string
+		lineageTag: 8ac5ad50-ee68-4480-830e-ecf47ce66156
+		summarizeBy: none
+		sourceColumn: classificacao
+
+		annotation SummarizationSetBy = Automatic
+
+	column categoria
+		dataType: string
+		lineageTag: a49ca96b-d739-4b49-b09b-885b2dca94a5
+		summarizeBy: none
+		sourceColumn: categoria
+
+		annotation SummarizationSetBy = Automatic
+
+	column sinopse
+		dataType: string
+		lineageTag: 5bf94231-f216-4343-9f7e-10640747ac1e
+		summarizeBy: none
+		sourceColumn: sinopse
+
+		annotation SummarizationSetBy = Automatic
+
+	column duracao_numero
+		dataType: int64
+		formatString: 0
+		lineageTag: 08080645-aa53-4530-8cd7-95b309289813
+		summarizeBy: sum
+		sourceColumn: duracao_numero
+
+		annotation SummarizationSetBy = Automatic
+
+	column duracao_unidade
+		dataType: string
+		lineageTag: bc7d3e1a-1a7b-4aee-bca3-c4bf7402f9bd
+		summarizeBy: none
+		sourceColumn: duracao_unidade
+
+		annotation SummarizationSetBy = Automatic
+
+	column publico_alvo
+		dataType: string
+		lineageTag: 640302a9-6e15-4449-b44e-1cd8e95cea80
+		summarizeBy: none
+		sourceColumn: publico_alvo
+
+		annotation SummarizationSetBy = Automatic
+
+	column geracao_conteudo
+		dataType: string
+		lineageTag: df3c1a4e-de5a-4051-8267-d401c97aff6e
+		summarizeBy: none
+		sourceColumn: geracao_conteudo
+
+		annotation SummarizationSetBy = Automatic
+
+	partition netflix_titulos_completos = m
+		mode: import
+		source =
+				let
+				    Fonte = Excel.Workbook(File.Contents("C:\Users\freit\OneDrive\Documentos\SQL-Pratica\netflix_db\pyspark\netflix_titulos_completo.xlsx"), null, true),
+				    result_Sheet = Fonte{[Item="result",Kind="Sheet"]}[Data],
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(result_Sheet, [PromoteAllScalars=true]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"id_conteudo", type text}, {"tipo_midia", type text}, {"titulo", type text}, {"diretor", type text}, {"elenco", type text}, {"data_adicao", Int64.Type}, {"ano_lancamento", Int64.Type}, {"classificacao", type text}, {"categoria", type text}, {"sinopse", type text}, {"duracao_numero", Int64.Type}, {"duracao_unidade", type text}, {"publico_alvo", type text}, {"geracao_conteudo", type text}}),
+				    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Tipo Alterado",{{"data_adicao", type date}})
+				in
+				    #"Tipo Alterado1"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+

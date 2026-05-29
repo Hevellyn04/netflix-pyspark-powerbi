@@ -1,0 +1,10 @@
+relationship 64361a5b-089a-4499-a4f6-6c13be95ae11
+	joinOnDateBehavior: datePartOnly
+	fromColumn: netflix_titulos_completos.data_adicao
+	toColumn: LocalDateTable_2328d773-9fa0-4627-85f3-acaec1de494e.Date
+
+relationship AutoDetected_39da4263-e4f3-45a6-a173-3ce460b27f49
+	crossFilteringBehavior: bothDirections
+	fromColumn: netflix_paises_titulos.id_conteudo
+	toColumn: netflix_titulos_completos.id_conteudo
+

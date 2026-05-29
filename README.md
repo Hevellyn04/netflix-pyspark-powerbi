@@ -1,51 +1,45 @@
-# 🎬 Netflix Data Analytics - SQL & Power BI
+🎬 Netflix Data Engineering & Analytics
+Este projeto engloba o pipeline completo de dados do catálogo da Netflix: desde a ingestão e tratamento pesado de dados brutos utilizando PySpark no Databricks (arquitetura Fato/Dimensão) até a criação de um dashboard interativo no Power BI.
 
-Este projeto foi desenvolvido com o objetivo de tratar, estruturar e analisar os dados do catálogo da Netflix. A solução passa por todo o pipeline de dados: desde o tratamento de dados brutos utilizando banco de dados SQL até a criação de um dashboard visual e interativo no Power BI.
+📸 O Dashboard
+(!['Visualização Dashboard'](img/dashboard.png))
 
-## 📸 O Dashboard
+🛠️ Tecnologias Utilizadas
+ PySpark (Databricks): Limpeza de nulos, padronização de texto e normalização de tabelas na nuvem.
+ Power BI: Modelagem dimensional (Star Schema), criação de medidas dinâmicas em DAX e desenvolvimento dos visuais.
+ Git & GitHub: Controle de versão e documentação.
 
-Aqui está o resultado visual do relatório desenvolvido no Power BI:
+📂 Estrutura do Projeto
+ ⁠/notebooks_script⁠: Scripts Python/PySpark desenvolvidos no Databricks.
+ ⁠/relatorio_power-bi⁠: Arquivo original do projeto do Power BI (⁠.pbix⁠).
+ ⁠/img⁠: Imagens da documentação.
 
-![Visualização do Dashboard](img/dashboard.png)
+🧼 Engenharia e Limpeza de Dados
+ Toda a transformação complexa foi antecipada na camada de dados com PySpark para garantir performance e um modelo limpo no Power BI:
+ Modelo Dimensional (Star Schema): Identificação e tratamento de dados multivalorados (como a coluna de países), utilizando a função ⁠explode⁠ para gerar uma tabela Dimensão de Países isolada e conectada à tabela Fato.
+ Tratamento de Nulos: Higienização e substituição de dados ausentes.
+ Padronização: Divisão de strings de duração em colunas numéricas de valor e unidade de medida.
 
-## 🛠️ Tecnologias e Ferramentas Utilizadas
+📊 Principais Insights
+ Filmes dominam a maior parte do catálogo da Netflix.
+ A média de duração dos filmes é de 59 minutos, e a de séries é de duas temporadas (calculadas de forma 100% dinâmica).
+ O catálogo possui maior foco no público adulto.
+ Os Estados Unidos lideram isolados na produção dos títulos
 
-* *SQL (SQLite):* Para a exploração inicial, limpeza de dados e criação de Views.
-* *Power BI:* Para modelagem dos dados, criação de medidas em DAX e desenvolvimento dos visuais.
-* *Git & GitHub:* Para controle de versão e documentação do projeto.
+💻 Exemplo de como a transformação foi estruturada para consumo no Power BI:
 
-## 🗃️ Estrutura do Projeto
+```PySpark
 
-* /sql: Contém os scripts das queries utilizadas e a View de limpeza.
-* /relatorios: Contém o projeto estruturado do Power BI (.pbip).
-* /img: Imagens utilizadas na documentação.
+# Transformações das colunas
 
-## 🧼 Processo de Limpeza de Dados (SQL)
-
-Para garantir a qualidade das análises no Power BI, criei uma *View de limpeza* no SQL para tratar problemas comuns na base bruta da Netflix, tais como:
-* Tratamento de valores nulos (nulls) e vazios de todas as colunas.
-* Categorização dos títulos por ano de lançamento e do público alvo de cada título.
-* Limpeza na coluna de duração, separando duração valor da duração unidade em duas colunas.
-
-## 📈 Princpais Insights Extraídos
-
-* A maior parte dos titulos do catálogo da Netflix são de filmes.
-* A média de duração dos filmes é de 59 min, já a de séries são de duas temporadas.
-* O catálogo da Netflix possuí mais títulos destinados para o público adulto.
-* Os Estados Unidos está em primeiro lugar na produção de filmes e séries no catálogo da Netflix.
-
-Exemplo de como a View foi estruturada para consumo no Power BI:
-
-```sql
-
-CREATE VIEW netflix_clean AS 
-
-SELECT id_conteudo,
-        UPPER(TRIM(titulo)) AS titulo,
-       
-    CASE
-      WHEN tipo = 'Movie' THEN 'Filme'
-      WHEN tipo = 'TV Show' THEN 'Série'
-     END AS tipo_midia,
-    -- outras transformações...
-FROM netflix_titles;
+df_netflix_final = df_netflix_titulos \
+ .withColumn("titulo", F.upper(F.trim(F.col("titulo")))) \
+ .withColumn("tipo_midia", F.trim(F.when(F.col("tipo_midia") == "Movie", "Filme").when(F.col("tipo_midia") == "TV Show", "Série").otherwise("Tipo Mídia Não Informado"))) \
+ .withColumn("diretor",F.trim(F.coalesce(F.col("diretor"), F.lit("Diretor Não Informado")))) \
+ .withColumn("elenco",F.trim(F.coalesce(F.col("elenco"), F.lit("Elenco Não Informado")))) \
+ .withColumn("data_adicao", 
+        F.coalesce(
+        F.to_date(F.trim(F.col("data_adicao")), "MMMM d, yyyy"),
+        F.to_date(F.lit("1900-01-01"))
+    )) \  -- outras transformações...
+DISPLAY(df_netflix_final)

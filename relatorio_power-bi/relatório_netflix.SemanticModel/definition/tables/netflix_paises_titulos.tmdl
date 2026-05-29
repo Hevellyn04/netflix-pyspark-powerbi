@@ -1,0 +1,36 @@
+table netflix_paises_titulos
+	lineageTag: 8494899f-fe91-4231-a4e8-ca02a47e96ed
+
+	column id_conteudo
+		dataType: string
+		lineageTag: fc60f71e-9e31-47d3-bf76-36b22f729fa2
+		summarizeBy: none
+		sourceColumn: id_conteudo
+
+		annotation SummarizationSetBy = Automatic
+
+	column pais_separado
+		dataType: string
+		lineageTag: 1471c27e-22de-428c-8fba-43c27bfbe2cc
+		summarizeBy: none
+		sourceColumn: pais_separado
+
+		annotation SummarizationSetBy = Automatic
+
+	partition netflix_paises_titulos = m
+		mode: import
+		source =
+				let
+				    Fonte = Csv.Document(File.Contents("C:\Users\freit\OneDrive\Documentos\SQL-Pratica\netflix_db\pyspark\netflix_paises_titulos.csv"),[Delimiter=",", Columns=2, Encoding=65001, QuoteStyle=QuoteStyle.None]),
+				    #"Tipo Alterado" = Table.TransformColumnTypes(Fonte,{{"Column1", type text}, {"Column2", type text}}),
+				    #"Cabeçalhos Promovidos" = Table.PromoteHeaders(#"Tipo Alterado", [PromoteAllScalars=true]),
+				    #"Tipo Alterado1" = Table.TransformColumnTypes(#"Cabeçalhos Promovidos",{{"id_conteudo", type text}, {"pais_separado", type text}}),
+				    #"Valor Substituído" = Table.ReplaceValue(#"Tipo Alterado1","","País Não Informado",Replacer.ReplaceValue,{"pais_separado"}),
+				    #"Linhas Filtradas" = Table.SelectRows(#"Valor Substituído", each true)
+				in
+				    #"Linhas Filtradas"
+
+	annotation PBI_NavigationStepName = Navegação
+
+	annotation PBI_ResultType = Table
+
